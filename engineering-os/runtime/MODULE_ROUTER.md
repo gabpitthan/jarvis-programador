@@ -14,6 +14,7 @@ For T3/T4: consult all relevant normative sections for security/risk/data/produc
 
 ## Suggested routing
 
+Any feature approved for production → `modules/code_health.md` (load, coverage, complexity, dependency structure). Mandatory for T2+; the four gates are reported in the delivery evidence, and an unmeasured gate is reported as NOT MEASURED, never omitted.
 Frontend/UI → `modules/frontend.md` + `modules/consistency.md` + testing when behavior changes.
 API/webhook/contracts → `modules/api_contracts.md` + security/testing as applicable.
 Database/data/migration → `modules/database.md` + security/testing/operations when applicable.

@@ -912,6 +912,34 @@ Não substitua outcome por proxy interno.
 
 `build passes` não é equivalente a `feature works`.
 
+## 130.1 CODE HEALTH GATES
+
+`feature works` também não é equivalente a `codebase sustentável`.
+
+Antes de aprovar qualquer feature para produção, medir e reportar os quatro
+gates de `modules/code_health.md`:
+
+| Gate | Mede | Limiar |
+|---|---|---|
+| LOAD | requests/s e p95/p99 sob concorrência | sem regressão contra o baseline |
+| COVERAGE | cobertura do diff e tendência do repositório | 85% no diff, tendência não cai |
+| COMPLEXITY | complexidade ciclomática por função | ≤10 normal, >15 bloqueia |
+| DEPENDENCY | ciclos, fan-in/fan-out, violação de camada | zero ciclos novos |
+
+Existem porque código gerado passa em review e em teste enquanto a base
+apodrece em silêncio: instrução de TDD não produz teste (o agente pula os que
+considera tediosos e reporta sucesso de boa-fé), complexidade cresce por função
+até só um modelo conseguir alterá-la, e acoplamento transforma uma correção em
+cascata.
+
+Gate sem ferramenta no projeto reporta `NOT MEASURED` com a razão. Omitir é
+proibido: silêncio é lido como aprovação.
+
+Funcionam como catraca. Registrar os números a cada lote e nunca deixá-los
+piorar sem decisão escrita — limiar atingido uma vez e erodido depois é
+exatamente como uma base se torna insustentável com todo lote parecendo
+aceitável.
+
 ---
 
 ---
