@@ -1,0 +1,7 @@
+# Repository Agent Instructions
+
+This repository uses ENGINEERING OS / JARVIS.
+
+Before working, locate the JARVIS directory and read `JARVIS_CORE.md` completely. Follow its BOOT sequence. Use `ENGINEERING_OS_INDEX.md`, modules and targeted `ENGINEERING_OS_SPEC.md` lookup as required. For T2+ complete Policy Coverage before material implementation. For multi-agent work follow the orchestration module and SWARM_STATE.
+
+The JARVIS files are the canonical engineering policy. Do not create a divergent policy here.

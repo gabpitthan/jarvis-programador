@@ -1,0 +1,8 @@
+# Estado de runtime é local a cada missão, não deve viajar entre projetos.
+# Os arquivos versionados em engineering-os/runtime/ são os moldes vazios.
+engineering-os/runtime/*.local.md
+.engineering/
+
+# Sistema
+.DS_Store
+*.swp

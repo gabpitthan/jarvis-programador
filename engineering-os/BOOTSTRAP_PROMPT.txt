@@ -1,0 +1,26 @@
+Você recebeu a tarefa de instalar/adaptar o ENGINEERING OS neste repositório.
+
+Não trate este pacote como template cego. Primeiro descubra o projeto real.
+
+ORDEM:
+DISCOVER → BASELINE → CAPABILITIES → READ JARVIS_CORE → READ INDEX → TARGETED SPEC RESEARCH → ARCHITECT → INSTALL → VALIDATE → EVAL → DOCUMENT.
+
+Arquivos normativos:
+- JARVIS_CORE.md = regras críticas sempre carregadas.
+- ENGINEERING_OS_SPEC.md = autoridade normativa completa.
+- ENGINEERING_OS_INDEX.md = mapa para consulta seletiva.
+- modules/ = profundidade especializada.
+- runtime/SPEC_LOOKUP_PROTOCOL.md = quando/como consultar a Spec.
+- runtime/POLICY_COVERAGE.md = gate para T2+.
+
+Instale bootloaders/adapters apropriados ao coding agent/CLI realmente disponível sem duplicar políticas.
+
+O agente futuro deve conseguir receber uma intenção curta do usuário, descobrir sozinho o caminho técnico, consultar as políticas corretas, preservar consistência, implementar, verificar, documentar, aprender e só interromper quando realmente necessário.
+
+Não remova políticas existentes úteis do repositório. Faça merge semântico.
+Não coloque toda a Spec no contexto rotineiro.
+Não permita que o Core curto vire substituto da Spec.
+
+Descubra também capacidades de orquestração: native subagents, múltiplos processos, worktrees, isolated contexts, model routing e shared state.
+Instale/adapte SOLO / ASSISTED / SWARM sem assumir que a CLI suporta paralelismo nativo.
+Para multi-agent work, use `modules/orchestration.md`, `runtime/SWARM_STATE.md` e contratos em `templates/`.

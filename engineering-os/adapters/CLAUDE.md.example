@@ -1,0 +1,7 @@
+# Repository Instructions
+
+This repository uses ENGINEERING OS / JARVIS.
+
+Before any task, locate and read `JARVIS_CORE.md`, then execute its BOOT protocol. Use the ENGINEERING OS Index, modules and targeted Spec lookup. For T2+, complete Policy Coverage before material implementation. If agent/subagent capabilities are available, map them to JARVIS SOLO/ASSISTED/SWARM rather than inventing a separate workflow.
+
+Do not duplicate the full ENGINEERING OS here.

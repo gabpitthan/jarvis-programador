@@ -1,0 +1,7 @@
+# Repository Context
+
+This repository uses ENGINEERING OS / JARVIS.
+
+Locate `JARVIS_CORE.md`, read it completely, and execute its BOOT sequence before development. Load only relevant modules and Spec sections using `ENGINEERING_OS_INDEX.md`. For T2+, perform Policy Coverage. If subagent/extension capabilities are available, map them to JARVIS SOLO/ASSISTED/SWARM.
+
+Do not create policies here that diverge from the ENGINEERING OS.
