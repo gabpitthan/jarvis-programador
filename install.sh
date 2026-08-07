@@ -60,6 +60,15 @@ write_bootloader() {
     return
   fi
 
+  # Instalação parcial silenciosa é pior que falha: um projeto sem bootloader
+  # não carrega o Core e nada avisa. Falhe alto.
+  if [[ -f "$file" && ! -w "$file" ]] || [[ ! -e "$file" && ! -w "$(dirname "$file")" ]]; then
+    echo "erro: sem permissão de escrita em $file" >&2
+    echo "       corrija o dono no escopo mínimo e rode de novo:" >&2
+    echo "       sudo chown \$USER $file" >&2
+    return 1
+  fi
+
   if [[ -f "$file" ]]; then
     printf '\n' >> "$file"
     echo "bootloader anexado a $(basename "$file") (política existente preservada)"
