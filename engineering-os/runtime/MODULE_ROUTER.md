@@ -14,6 +14,7 @@ For T3/T4: consult all relevant normative sections for security/risk/data/produc
 
 ## Suggested routing
 
+Unfamiliar repository, unclear blast radius, coupling/cycles question, refactor or extraction, or a defect class that may repeat → `modules/knowledge_graph.md`. Decide from the task; never ask the user to manage the graph. Report what it changed in the plan, or do not build it.
 Any feature approved for production → `modules/code_health.md` (load, coverage, complexity, dependency structure). Mandatory for T2+; the four gates are reported in the delivery evidence, and an unmeasured gate is reported as NOT MEASURED, never omitted.
 Frontend/UI → `modules/frontend.md` + `modules/consistency.md` + testing when behavior changes.
 API/webhook/contracts → `modules/api_contracts.md` + security/testing as applicable.

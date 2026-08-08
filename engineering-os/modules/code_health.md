@@ -121,6 +121,13 @@ Tools: `madge --circular`, `dependency-cruiser` (JS/TS, supports declared
 architectural rules), `import-linter` (Python), `go-arch-lint`, `deptrac` (PHP),
 `NDepend` (.NET).
 
+When no per-language tool is installed, `graphify` answers this gate directly
+and across ~40 languages at once — cycles, god nodes and communities come from
+the same graph. See `modules/knowledge_graph.md`. It does not replace a
+per-language linter with declared architectural rules, which fails
+automatically on the next violation; use it to measure now and to decide which
+rules are worth declaring.
+
 Fail when:
 - a new cycle appears;
 - the change adds a dependency that crosses a declared layer boundary;
