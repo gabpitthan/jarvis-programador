@@ -17,7 +17,7 @@ Reavalie no BOOT de cada sessão: a CLI executora pode mudar (Codex, Gemini CLI,
 | Subagents | YES | Ferramenta Agent: `general-purpose`, `Explore`, `Plan`, `claude` |
 | Vector search | NO | Sem índice vetorial configurado |
 | Code index/LSP | NO | Busca é textual (Grep/Glob) |
-| Graph query | NO | — |
+| Graph query | YES | `graphify` (`graphifyy` 0.9.36, Apache-2.0/MIT) — AST por tree-sitter em ~40 linguagens, local, sem telemetria. Skill em `~/.claude/skills/graphify/`, CLI em `~/.local/bin/graphify`. Gera `graphify-out/{graph.json,graph.html,GRAPH_REPORT.md}`; `graphify path A B`, `explain X` e `query` consultam o grafo. Instalado em 2026-08-08 |
 | Deploy access | YES | Docker + acesso a `/root/*` por travessia; produção real neste host |
 | Production access | YES | **RED zone.** Whitelabel WhatsApp em produção com tráfego real |
 | Native subagents | YES | Ferramenta Agent com contexto isolado por agente |
