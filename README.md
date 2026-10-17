@@ -20,7 +20,7 @@ Você descreve o resultado. O agente descobre o caminho técnico, consulta a pol
 | `engineering-os/ENGINEERING_OS_INDEX.md` | Mapa para consulta seletiva da Spec |
 | `engineering-os/ENGINEERING_OS_SPEC.md` | Autoridade normativa completa (~213 KB) |
 | `engineering-os/modules/` | Profundidade por concern: segurança, database, frontend, orquestração, roteamento de modelo… |
-| `engineering-os/runtime/` | Estado vivo: capabilities, missão ativa, policy coverage, swarm |
+| `engineering-os/runtime/` | Protocolos e gabaritos; estado vivo fica no projeto, separado por instância |
 | `engineering-os/templates/` | Contratos de context capsule, checkpoint e delegação |
 | `engineering-os/adapters/` | Bootloaders para Claude Code, Codex, Gemini CLI, OpenCode |
 | `install.sh` | Instala o OS em um projeto |
@@ -56,7 +56,7 @@ Guias: `engineering-os/QUICKSTART.md` (5 min) e `engineering-os/HOW_TO_USE_JARVI
 
 ## Ambiente
 
-`engineering-os/runtime/CAPABILITY_MATRIX.md` está preenchida com as capabilities reais deste servidor e com as restrições que o agente precisa respeitar aqui — hooks que negam em vez de pedir, projetos pertencentes a `root`, produção com tráfego real, ausência de browser e screenshots.
+`engineering-os/runtime/CAPABILITY_MATRIX.md` é um retrato histórico do ambiente Claude Code, não inventário atual. Cada CLI precisa redescobrir suas capacidades no BOOT. Para várias contas no mesmo projeto, use estado privado por instância e um quadro compartilhado de ownership.
 
 Reavalie a matriz quando a CLI executora mudar. O OS é portátil entre agentes; as capabilities não são.
 

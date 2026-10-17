@@ -198,3 +198,24 @@ DONE only when:
 - success contract verified end-to-end when possible.
 
 THE USER TALKS TO ONE JARVIS. JARVIS MAY USE MANY AGENTS.
+
+## Entrada por qualquer CLI e coordenação entre processos
+
+Quando o mesmo projeto possuir vários CLIs interativos, qualquer CLI pode
+receber a intenção. O receptor torna-se o Integration Lead daquela missão;
+nenhuma conta ou fornecedor é líder permanente. Antes de iniciar escrita,
+reconcilie panes/processos, worktrees, ownership e missões já ativas. Use o
+quadro transacional de missão definido pelo projeto, quando existir, para
+registrar objetivo, critérios de aceite, DAG, base, dono e escopo de cada nó.
+
+Distribua nós READY apenas a executores capazes e efetivamente disponíveis.
+Equilibre o histórico de trabalho entre eles sem atrasar uma tarefa por
+igualdade numérica. Nunca envie prompt para um pane ocupado. Se a sessão não
+suportar entrega segura a outro CLI, continue os nós locais e registre a fila;
+não alegue que o trabalho foi distribuído.
+
+Cada executor retorna evidência vinculada ao HEAD. O líder confere a base e
+integra uma vez. A missão só fecha após aceitação do resultado combinado. T0/T1
+seguem SOLO por padrão; T2+ podem usar ASSISTED/SWARM conforme dependências e
+risco. Produção continua sujeita a autorização específica do usuário; nenhum
+quadro de missão ou estado `DONE` concede permissão de deploy.
