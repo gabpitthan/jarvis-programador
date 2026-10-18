@@ -1,5 +1,10 @@
 # CAPABILITY MATRIX
 
+> Gabarito histórico de 2026-08-07, não inventário atual. Em cada BOOT,
+> descubra capacidades do processo/usuário/CLI presente e grave o resultado
+> no estado privado por instância do projeto. Não conclua que browser,
+> subagentes, permissão ou modelo estão ausentes/presentes com base nesta tabela.
+
 Preenchida no bootstrap de 2026-08-07 para o ambiente **Claude Code / servidor Ubuntu (`claudeuser`)**.
 Reavalie no BOOT de cada sessão: a CLI executora pode mudar (Codex, Gemini CLI, OpenCode) e as capabilities mudam com ela.
 
