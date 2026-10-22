@@ -217,5 +217,7 @@ não alegue que o trabalho foi distribuído.
 Cada executor retorna evidência vinculada ao HEAD. O líder confere a base e
 integra uma vez. A missão só fecha após aceitação do resultado combinado. T0/T1
 seguem SOLO por padrão; T2+ podem usar ASSISTED/SWARM conforme dependências e
-risco. Produção continua sujeita a autorização específica do usuário; nenhum
-quadro de missão ou estado `DONE` concede permissão de deploy.
+risco. Produção continua sujeita a autorização específica do usuário: CI verde,
+aprovação de revisão e merge não autorizam deploy. A publicação aguarda autorização
+explícita e separada do proprietário vinculada ao candidato exato (SHA). Nenhum quadro
+de missão, autonomia de swarm ou estado `DONE` concede permissão de deploy.

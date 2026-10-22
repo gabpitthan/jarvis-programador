@@ -1,0 +1,4 @@
+# 'producao' é um symlink recriado automaticamente para ../engineering-os.
+# Perfis divergentes criados com `jarvis profile new` podem ser versionados
+# deliberadamente (git add profiles/<nome>), se você quiser guardá-los.
+/producao

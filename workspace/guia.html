@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Konnex Workspace · como usar</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+:root{
+  --tinta:#0A0F1E; --tinta2:#131B36; --azul:#3D6BFF; --azul2:#6F93FF;
+  --nevoa:#F4F6FB; --linha:#E4E9F2; --cinza:#59627A; --cinza2:#8A93A8;
+  --verde:#1F9D63; --ambar:#B8791B;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--nevoa);color:var(--tinta);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:820px;margin:0 auto;padding:0 22px}
+
+/* topo */
+.topo{background:radial-gradient(120% 120% at 50% -20%,#131B36,var(--tinta) 62%);color:#fff;padding:56px 0 46px;position:relative;overflow:hidden}
+.topo::after{content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1px);background-size:24px 24px;
+  -webkit-mask-image:linear-gradient(#000,transparent 80%);mask-image:linear-gradient(#000,transparent 80%)}
+.topo .wrap{position:relative}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--azul2);margin-bottom:16px}
+.eyebrow::before{content:"";width:18px;height:1px;background:currentColor;opacity:.6}
+h1{font-size:clamp(1.9rem,5vw,2.7rem);line-height:1.08;letter-spacing:-.035em;font-weight:700}
+.lead{color:rgba(255,255,255,.66);font-size:clamp(1rem,2.4vw,1.15rem);margin-top:16px;max-width:60ch}
+
+/* corpo */
+main{padding:44px 0 72px}
+section{margin-bottom:44px}
+h2{font-size:1.5rem;letter-spacing:-.028em;font-weight:700;margin-bottom:6px;display:flex;align-items:baseline;gap:12px}
+h2 .n{font-size:.9rem;font-weight:700;color:#fff;background:var(--azul);width:28px;height:28px;border-radius:9px;display:inline-grid;place-items:center;flex:none;letter-spacing:0}
+.sub{color:var(--cinza);margin:0 0 18px 40px}
+p{color:#2B3552}
+.card{background:#fff;border:1px solid var(--linha);border-radius:16px;padding:24px 26px;box-shadow:0 1px 2px rgba(10,15,31,.04),0 8px 24px rgba(10,15,31,.05);margin-left:40px}
+@media(max-width:560px){.card,.sub{margin-left:0}}
+
+/* modelo sala/aba */
+.modelo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-left:40px}
+@media(max-width:560px){.modelo{grid-template-columns:1fr;margin-left:0}}
+.mbox{background:#fff;border:1px solid var(--linha);border-radius:14px;padding:20px 22px}
+.mbox b{display:block;font-size:1.05rem;letter-spacing:-.02em;margin-bottom:4px}
+.mbox span{color:var(--cinza);font-size:.94rem}
+.mbox .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--azul);background:#EEF2FF;padding:3px 9px;border-radius:999px;margin-bottom:10px}
+
+/* terminal */
+.term{background:#0C1226;border:1px solid #1E2748;border-radius:13px;overflow:hidden;margin-top:14px;box-shadow:0 12px 30px rgba(10,15,31,.14)}
+.term-top{display:flex;align-items:center;gap:7px;padding:11px 14px;border-bottom:1px solid #1E2748}
+.dot{width:10px;height:10px;border-radius:50%;background:#33406B}
+.term-name{margin-left:8px;font-size:12px;color:#7C88AE;font-family:var(--mono)}
+.term pre{margin:0;padding:16px 18px;font-family:var(--mono);font-size:13.5px;line-height:1.7;color:#C7D0EC;overflow-x:auto}
+.term .p{color:#5D6B99}      /* prompt $ */
+.term .c{color:#8FE3B0}      /* comando */
+.term .o{color:#8892B5}      /* saída */
+.term .hl{color:#9DB6FF}     /* destaque */
+
+/* teclas */
+.teclas{list-style:none;margin-left:40px}
+@media(max-width:560px){.teclas{margin-left:0}}
+.teclas li{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:15px 18px;margin-bottom:10px;display:flex;gap:16px;align-items:center}
+.kbd{display:flex;gap:5px;flex:none;flex-wrap:wrap}
+.kbd kbd{font-family:var(--mono);font-size:12px;background:var(--tinta);color:#fff;border-radius:6px;padding:5px 9px;box-shadow:0 2px 0 rgba(0,0,0,.25);white-space:nowrap}
+.teclas .txt b{font-weight:650}
+.teclas .txt span{color:var(--cinza);font-size:.93rem}
+
+/* tabela de comandos */
+.ref{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--linha);border-radius:14px;overflow:hidden;margin-left:40px;font-size:.94rem}
+.ref th,.ref td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--linha);vertical-align:top}
+.ref th{background:var(--nevoa);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--cinza2)}
+.ref tr:last-child td{border-bottom:0}
+.ref code{font-family:var(--mono);font-size:12.5px;color:#1B2A5E;background:#EEF2FF;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.ref td:last-child{color:var(--cinza)}
+/* no celular a tabela vira lista: comando em cima, descrição embaixo */
+@media(max-width:560px){
+  .ref{margin-left:0;display:block;border:0;background:none}
+  .ref tr{display:block;background:#fff;border:1px solid var(--linha);border-radius:12px;margin-bottom:10px}
+  .ref tr.head{display:none}
+  .ref td{display:block;border-bottom:0;padding:6px 16px}
+  .ref td:first-child{padding-top:15px}
+  .ref td:last-child{padding-bottom:15px}
+  .ref code{white-space:normal;display:inline-block}
+}
+
+.nota{margin-left:40px;background:#FBF7EC;border:1px solid #F0E4C8;border-radius:12px;padding:16px 18px;color:#6B5A2E;font-size:.94rem}
+@media(max-width:560px){.nota{margin-left:0}}
+.nota b{color:#4A3D1C}
+
+code.inl{font-family:var(--mono);font-size:.88em;background:#EEF2FF;color:#1B2A5E;padding:2px 6px;border-radius:5px}
+
+footer{border-top:1px solid var(--linha);padding:26px 0;color:var(--cinza2);font-size:.86rem}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="wrap">
+    <div class="eyebrow">Konnex Workspace</div>
+    <h1>Vários projetos, vários CLIs, ao mesmo tempo</h1>
+    <p class="lead">Como abrir o Claude num projeto e o Codex noutro, em paralelo, sem que um atrapalhe o outro. Você não precisa entender de programação — são três comandos e três teclas.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <h2><span class="n">•</span> A ideia em uma frase</h2>
+    <p class="sub">Antes dos comandos, o modelo mental. O resto decorre disto.</p>
+    <div class="modelo">
+      <div class="mbox">
+        <span class="tag">Sala</span>
+        <b>Cada projeto é uma sala</b>
+        <span>Whitelabel é uma sala. A landing é outra. Elas ficam abertas em paralelo, cada uma com o seu trabalho rodando dentro.</span>
+      </div>
+      <div class="mbox">
+        <span class="tag">Aba</span>
+        <b>Cada CLI é uma aba</b>
+        <span>Dentro de uma sala, o Claude é uma aba e o Codex é outra. Você troca de aba para trocar de assistente no mesmo projeto.</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">1</span> Preparar o projeto (uma vez só)</h2>
+    <p class="sub">Isto liga o Jarvis no projeto. Não abre nada — só arruma. Faz uma vez na vida de cada projeto.</p>
+    <div class="card" style="padding:0;border:0;box-shadow:none;background:none">
+      <div class="term">
+        <div class="term-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="term-name">terminal</span></div>
+<pre><span class="p">$</span> <span class="c">jarvis add /root/whitelabel-whaticket</span>
+<span class="o">registrado como 'whitelabel-whaticket' (perfil: producao)</span>
+
+<span class="p">$</span> <span class="c">jarvis add /home/claudeuser/konnex-lp <span class="hl">--profile lite</span></span>
+<span class="o">registrado como 'konnex-lp' (perfil: lite)</span></pre>
+      </div>
+    </div>
+    <p class="nota" style="margin-top:14px"><b>Perfil?</b> É o “grau de rigor” do Jarvis. <code class="inl">producao</code> é o completo, para o que está no ar de verdade. <code class="inl">lite</code> é enxuto, para landing e experimentos. Projetos no mesmo perfil seguem a mesma política; perfis diferentes são independentes.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span> Abrir um projeto com um CLI</h2>
+    <p class="sub">Aqui a tela vira o assistente, já dentro da pasta certa. Você conversa normal.</p>
+    <div class="term">
+      <div class="term-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="term-name">terminal</span></div>
+<pre><span class="p">$</span> <span class="c">jarvis up whitelabel-whaticket claude</span>
+<span class="o">sessão 'whitelabel-whaticket', janela 'claude' pronta</span>
+<span class="o">→ a tela vira o Claude Code, dentro do Whitelabel</span></pre>
+    </div>
+    <p style="margin-left:40px;margin-top:16px">Quer o Codex mexendo na landing ao mesmo tempo? <b>Solte esta sala</b> (veja as teclas abaixo) e abra a outra:</p>
+    <div class="term">
+      <div class="term-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="term-name">terminal</span></div>
+<pre><span class="p">$</span> <span class="c">jarvis up konnex-lp codex</span>
+<span class="o">→ o Codex trabalha na landing; o Claude segue vivo no Whitelabel</span></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">3</span> As três teclas que você precisa</h2>
+    <p class="sub">As salas rodam num programa chamado tmux. Só isto basta para se virar.</p>
+    <ul class="teclas">
+      <li>
+        <span class="kbd"><kbd>Ctrl</kbd><kbd>b</kbd><kbd>então</kbd><kbd>d</kbd></span>
+        <span class="txt"><b>Soltar a sala</b><br><span>Sai deixando tudo rodando lá dentro. É assim que você larga o Claude trabalhando e vai fazer outra coisa. (o “d” é de <em>detach</em>)</span></span>
+      </li>
+      <li>
+        <span class="kbd"><kbd>Ctrl</kbd><kbd>b</kbd><kbd>então</kbd><kbd>w</kbd></span>
+        <span class="txt"><b>Ver tudo que está aberto</b><br><span>Abre a lista de salas e abas. Você anda com as setas e entra na que quiser.</span></span>
+      </li>
+      <li>
+        <span class="kbd"><kbd>Ctrl</kbd><kbd>b</kbd><kbd>então</kbd><kbd>1</kbd></span>
+        <span class="txt"><b>Pular direto para uma aba</b><br><span>Dentro da sala, o número troca de aba na hora: 1, 2, 3… (Claude, Codex…)</span></span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span> Ver o que está aberto</h2>
+    <p class="sub">A qualquer momento, num terminal limpo:</p>
+    <div class="term">
+      <div class="term-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="term-name">terminal</span></div>
+<pre><span class="p">$</span> <span class="c">jarvis ls</span>
+<span class="o">== projetos registrados ==</span>
+<span class="o">nome                   caminho                      perfil</span>
+<span class="o">whitelabel-whaticket   /root/whitelabel-whaticket   producao</span>
+<span class="o">konnex-lp              /home/claudeuser/konnex-lp   lite</span>
+
+<span class="o">== sessões tmux vivas ==</span>
+<span class="o">whitelabel-whaticket: 2 windows   (Claude trabalhando)</span>
+<span class="o">konnex-lp: 2 windows              (Codex trabalhando)</span></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">≡</span> Todos os comandos</h2>
+    <p class="sub">Para consultar quando precisar. No dia a dia você usa só o <code class="inl">up</code>.</p>
+    <table class="ref">
+      <tr class="head"><th>Comando</th><th>O que faz</th></tr>
+      <tr><td><code>jarvis add &lt;caminho&gt; [--profile &lt;nome&gt;]</code></td><td>Prepara um projeto (uma vez). Sem <code class="inl">--profile</code>, usa o <code class="inl">producao</code>.</td></tr>
+      <tr><td><code>jarvis up &lt;nome&gt; [claude|codex]</code></td><td>Abre/volta para a sala do projeto, na aba do CLI escolhido.</td></tr>
+      <tr><td><code>jarvis ls</code></td><td>Lista os projetos e as salas que estão abertas agora.</td></tr>
+      <tr><td><code>jarvis down &lt;nome&gt;</code></td><td>Fecha a sala do projeto (encerra o que estava rodando nela).</td></tr>
+      <tr><td><code>jarvis profiles</code></td><td>Mostra os perfis de política que existem.</td></tr>
+      <tr><td><code>jarvis profile new &lt;nome&gt;</code></td><td>Cria um perfil novo que diverge sozinho, sem afetar os outros.</td></tr>
+      <tr><td><code>jarvis clis</code></td><td>Mostra quais assistentes estão instalados no servidor.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2><span class="n">?</span> Se travar</h2>
+    <div class="card">
+      <p><b>“Perdi a tela / não sei onde estou.”</b><br>Aperte <code class="inl">Ctrl</code>+<code class="inl">b</code> e solte, depois <code class="inl">w</code>. Aparece a lista de tudo que está aberto; entre na sala com as setas.</p>
+      <p style="margin-top:14px"><b>“Fechei o terminal por engano.”</b><br>Tudo bem — as salas continuam vivas no servidor. Abra um terminal e rode <code class="inl">jarvis ls</code> para vê-las, e <code class="inl">jarvis up &lt;nome&gt;</code> para voltar.</p>
+      <p style="margin-top:14px"><b>“Quero dois trabalhos no mesmo projeto sem se atrapalharem.”</b><br>Isso pede uma cópia separada da pasta (worktree). Peça ao assistente: ele monta para você.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Konnex · guia interno do workspace</span>
+    <span>uso pessoal — não indexado</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+#!/usr/bin/env bash
+# jarvis — operar vários projetos ao mesmo tempo, com vários CLIs, sob o
+# mesmo ENGINEERING OS, sem que um corrompa o estado do outro.
+#
+#   jarvis add   <caminho> [--profile <nome>] [--copy]   onboarda um projeto num perfil
+#   jarvis up    <nome|caminho> [cli]    abre/atacha uma sessão tmux do projeto para um CLI
+#   jarvis ls                            lista projetos registrados e sessões vivas
+#   jarvis down  <nome>                  encerra a sessão tmux do projeto
+#   jarvis profiles                      lista os perfis de política
+#   jarvis profile new <nome> [--from <perfil>]   cria um perfil que diverge sozinho
+#   jarvis clis                          mostra os CLIs detectados no servidor
+#
+# Princípio: nem tudo sob o mesmo Jarvis. Cada projeto escolhe um PERFIL de
+# política — 'producao' é o canônico compartilhado (o Jarvis do main); outros
+# perfis divergem sozinhos. E o ESTADO de missão (ACTIVE_MISSION, ROUTING_STATE,
+# SWARM_STATE, POLICY_COVERAGE, CAPABILITY_MATRIX) é privado de cada par
+# (projeto × CLI), para que Claude e Codex, e projetos diferentes, rodem em
+# paralelo sem escrever no mesmo arquivo. Duas contas do mesmo CLI também
+# precisam de estado privado por instância/pane; o quadro compartilhado do
+# projeto é separado desse estado.
+set -euo pipefail
+
+# resolve o caminho real: jarvis costuma rodar via symlink em ~/.local/bin
+SELF="$(readlink -f "${BASH_SOURCE[0]}")"
+JARVIS_HOME="$(cd "$(dirname "$SELF")/.." && pwd)"
+OS_DIR="$JARVIS_HOME/engineering-os"
+PROFILES_DIR="$JARVIS_HOME/profiles"
+DEFAULT_PROFILE="producao"
+REG_DIR="${JARVIS_WORKSPACE:-$HOME/.jarvis-workspace}"
+REG="$REG_DIR/projects"
+
+# CLI -> (arquivo de bootloader, comando para iniciar)
+cli_boot_file() { case "$1" in claude) echo CLAUDE.md;; codex) echo AGENTS.md;; gemini|agy) echo GEMINI.md;; *) echo "";; esac; }
+cli_command()   { case "$1" in claude) echo claude;;   codex) echo codex;;    gemini) echo gemini;; agy) echo agy;; *) echo "";; esac; }
+KNOWN_CLIS=(claude codex gemini agy)
+
+die() { echo "erro: $*" >&2; exit 1; }
+have() { command -v "$1" >/dev/null 2>&1; }
+
+detected_clis() {
+  local found=()
+  for c in "${KNOWN_CLIS[@]}"; do have "$(cli_command "$c")" && found+=("$c"); done
+  printf '%s\n' "${found[@]}"
+}
+
+# ---- perfis de política -----------------------------------------------------
+# Cada perfil é uma variante do ENGINEERING OS. O perfil padrão 'producao' é o
+# repositório canônico (symlink), compartilhado por quem o usa. Outros perfis
+# são cópias que divergem sozinhas.
+ensure_profiles() {
+  mkdir -p "$PROFILES_DIR"
+  [[ -e "$PROFILES_DIR/$DEFAULT_PROFILE" ]] || ln -s "$OS_DIR" "$PROFILES_DIR/$DEFAULT_PROFILE"
+}
+resolve_profile() {  # nome -> caminho real do OS daquele perfil
+  ensure_profiles
+  local p="$PROFILES_DIR/$1"
+  [[ -e "$p" ]] || die "perfil '$1' não existe (jarvis profiles; criar: jarvis profile new $1)"
+  readlink -f "$p"
+}
+
+# ---- registro simples: nome|caminho|perfil ---------------------------------
+mkdir -p "$REG_DIR"; touch "$REG"
+reg_path()    { awk -F'|' -v n="$1" '$1==n{print $2; exit}' "$REG"; }
+reg_profile() { awk -F'|' -v n="$1" '$1==n{print $3; exit}' "$REG"; }
+reg_add()     { grep -q "^$1|" "$REG" 2>/dev/null && sed -i "s#^$1|.*#$1|$2|$3#" "$REG" || echo "$1|$2|$3" >> "$REG"; }
+resolve() {  # aceita nome registrado ou caminho
+  local a="$1" p
+  if [[ -d "$a" ]]; then (cd "$a" && pwd); return; fi
+  p="$(reg_path "$a")"; [[ -n "$p" ]] && { echo "$p"; return; }
+  die "projeto '$a' não é um diretório nem um nome registrado (veja: jarvis ls)"
+}
+
+# ---- bootloader por CLI, com redirecionamento de estado -------------------
+write_bootloader() {
+  local file="$1" cli="$2" statedir="$3" profile="${4:-$DEFAULT_PROFILE}"
+  [[ -f "$file" ]] && grep -qF "# JARVIS BOOT" "$file" && { echo "  bootloader já em $(basename "$file")"; return; }
+  if [[ -f "$file" && ! -w "$file" ]] || { [[ ! -e "$file" ]] && [[ ! -w "$(dirname "$file")" ]]; }; then
+    die "sem permissão de escrita em $file (corrija o dono no escopo mínimo: sudo chown \$USER $file)"
+  fi
+  [[ -f "$file" ]] && printf '\n' >> "$file"
+  cat >> "$file" <<EOF
+# JARVIS BOOT
+
+Este repositório usa o ENGINEERING OS / JARVIS.
+
+**Perfil de política:** \`$profile\`.
+**Política (em \`.engineering/jarvis/\`, somente leitura).**
+**Estado legado deste tipo de CLI:** \`$statedir/\`.
+
+Antes de qualquer tarefa:
+
+1. leia \`.engineering/jarvis/JARVIS_CORE.md\` por completo e execute o BOOT;
+2. carregue \`.engineering/jarvis/ENGINEERING_OS_INDEX.md\` e selecione módulos por \`.engineering/jarvis/runtime/MODULE_ROUTER.md\`;
+3. para T2+, faça o lookup dirigido da Spec e preencha o Policy Coverage antes de mudança material;
+4. decida SOLO / ASSISTED / SWARM pela topologia da task e pelas capabilities reais;
+5. verifique o resultado real antes de declarar DONE.
+
+Estado privado novo vive em \`.engineering/state/instances/<id-do-pane-ou-sessao>/\`,
+único por processo/conta. O estado antigo em \`$statedir/\` é histórico;
+\`.engineering/jarvis/runtime/\` contém apenas gabaritos compartilhados.
+Estado comum de missão/ownership usa o quadro do projeto, se existir.
+Reavalie a CAPABILITY_MATRIX no BOOT: o CLI executor aqui é **$cli**.
+
+Não duplique a política do ENGINEERING OS neste arquivo. Ele é bootloader.
+EOF
+  echo "  bootloader escrito em $(basename "$file") (estado -> $statedir)"
+}
+
+# ---- add: onboarda um projeto ---------------------------------------------
+cmd_add() {
+  local target="" profile="$DEFAULT_PROFILE" mode=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --profile) profile="${2:?--profile requer um nome}"; shift 2;;
+      --profile=*) profile="${1#*=}"; shift;;
+      --copy) mode="--copy"; shift;;
+      -*) die "opção desconhecida: $1 (jarvis add <caminho> [--profile <nome>] [--copy])";;
+      *) [[ -z "$target" ]] && target="$1" || die "argumento extra: $1"; shift;;
+    esac
+  done
+  [[ -n "$target" ]] || die "uso: jarvis add <caminho> [--profile <nome>] [--copy]"
+  [[ -d "$target" ]] || die "'$target' não é um diretório"
+  target="$(cd "$target" && pwd)"
+  [[ "$target" != "$JARVIS_HOME" ]] || die "o repositório do JARVIS não se instala dentro de si mesmo"
+
+  local ospath; ospath="$(resolve_profile "$profile")"
+  local dest="$target/.engineering/jarvis"
+  mkdir -p "$target/.engineering"
+
+  # política: symlink para o perfil (padrão) ou cópia congelada dele
+  if [[ -e "$dest" || -L "$dest" ]]; then
+    if [[ -L "$dest" && "$(readlink -f "$dest")" == "$ospath" && "$mode" != "--copy" ]]; then :
+    else mv "$dest" "$dest.anterior-$(date +%Y%m%d-%H%M%S)"; fi
+  fi
+  if [[ "$mode" == "--copy" ]]; then rm -rf "$dest"; cp -a "$ospath" "$dest"; echo "política do perfil '$profile' copiada (congelada) em $dest";
+  elif [[ ! -L "$dest" ]]; then ln -s "$ospath" "$dest"; echo "política ligada ao perfil '$profile': $dest -> $ospath"; fi
+
+  # Cada sessão/conta nova reserva seu próprio diretório em instances/.
+  mkdir -p "$target/.engineering/state/instances"
+  local clis; mapfile -t clis < <(detected_clis)
+  [[ ${#clis[@]} -gt 0 ]] || clis=(claude)
+  for cli in "${clis[@]}"; do
+    local sd="$target/.engineering/state/$cli"
+    write_bootloader "$target/$(cli_boot_file "$cli")" "$cli" ".engineering/state/$cli" "$profile"
+  done
+
+  # o estado é local e volátil: não versionar
+  local gi="$target/.engineering/.gitignore"
+  [[ -f "$gi" ]] || printf 'state/\n' > "$gi"
+
+  reg_add "$(basename "$target")" "$target" "$profile"
+  echo "registrado como '$(basename "$target")' (perfil: $profile). Rode uma vez no projeto:"
+  echo "  \"Leia .engineering/jarvis/BOOTSTRAP_PROMPT.txt e adapte o ENGINEERING OS a este repositório.\""
+}
+
+# ---- profiles: listar e criar ----------------------------------------------
+cmd_profiles() {
+  ensure_profiles
+  echo "== perfis de política =="
+  local d n
+  for d in "$PROFILES_DIR"/*; do
+    [[ -e "$d" ]] || continue
+    n="$(basename "$d")"
+    if [[ -L "$d" ]]; then echo "  $n  (compartilhado -> $(readlink -f "$d"))"; else echo "  $n  (cópia própria, diverge sozinha)"; fi
+  done
+}
+cmd_profile() {
+  case "${1:-}" in
+    new)
+      shift; local name="" from="$DEFAULT_PROFILE"
+      while [[ $# -gt 0 ]]; do case "$1" in
+        --from) from="${2:?--from requer um nome}"; shift 2;;
+        --from=*) from="${1#*=}"; shift;;
+        -*) die "opção desconhecida: $1";;
+        *) [[ -z "$name" ]] && name="$1" || die "argumento extra: $1"; shift;;
+      esac; done
+      [[ -n "$name" ]] || die "uso: jarvis profile new <nome> [--from <perfil>]"
+      ensure_profiles
+      [[ "$name" == "$DEFAULT_PROFILE" ]] && die "'$DEFAULT_PROFILE' é o perfil canônico e não pode ser recriado"
+      [[ -e "$PROFILES_DIR/$name" ]] && die "perfil '$name' já existe"
+      local src; src="$(resolve_profile "$from")"
+      cp -a "$src" "$PROFILES_DIR/$name"
+      echo "perfil '$name' criado a partir de '$from' em $PROFILES_DIR/$name"
+      echo "é uma política própria — edite-a livremente, não afeta os outros perfis."
+      ;;
+    ""|list) cmd_profiles;;
+    *) die "uso: jarvis profile new <nome> [--from <perfil>]  |  jarvis profiles";;
+  esac
+}
+
+# ---- up: sessão tmux por projeto, janela por CLI --------------------------
+cmd_up() {
+  have tmux || die "tmux não encontrado"
+  local name_or_path="${1:-}" cli="${2:-claude}"
+  [[ -n "$name_or_path" ]] || die "uso: jarvis up <nome|caminho> [claude|codex|gemini|agy]"
+  local path; path="$(resolve "$name_or_path")"
+  local sess; sess="$(basename "$path")"
+  local cmd; cmd="$(cli_command "$cli")"
+  [[ -n "$cmd" ]] || die "CLI desconhecido: $cli (conhecidos: ${KNOWN_CLIS[*]})"
+  have "$cmd" || die "o CLI '$cli' ($cmd) não está instalado neste servidor"
+  [[ -d "$path/.engineering/jarvis" ]] || { echo "projeto ainda não onboardado; rodando 'jarvis add'..."; cmd_add "$path"; }
+
+  # uma sessão por projeto; uma janela por CLI dentro dela
+  tmux has-session -t "$sess" 2>/dev/null || tmux new-session -d -s "$sess" -c "$path" -n shell
+  if ! tmux list-windows -t "$sess" -F '#{window_name}' | grep -qx "$cli"; then
+    tmux new-window -t "$sess" -n "$cli" -c "$path" "$cmd"
+  fi
+  tmux select-window -t "$sess:$cli"
+  echo "sessão '$sess', janela '$cli' pronta (projeto: $path)"
+  if [[ -n "${TMUX:-}" ]]; then tmux switch-client -t "$sess"; else tmux attach -t "$sess"; fi
+}
+
+cmd_down() { have tmux || die "tmux não encontrado"; local s; s="$(basename "$(resolve "${1:?uso: jarvis down <nome>}")")"; tmux kill-session -t "$s" 2>/dev/null && echo "sessão '$s' encerrada" || echo "sessão '$s' não estava aberta"; }
+
+cmd_ls() {
+  echo "== projetos registrados =="
+  if [[ -s "$REG" ]]; then { echo "nome|caminho|perfil"; cat "$REG"; } | column -t -s'|'; else echo "  (nenhum — use: jarvis add <caminho>)"; fi
+  echo; echo "== sessões tmux vivas =="
+  tmux ls 2>/dev/null || echo "  (nenhuma)"
+}
+
+cmd_clis() { echo "CLIs detectados neste servidor:"; local any=0; for c in "${KNOWN_CLIS[@]}"; do if have "$(cli_command "$c")"; then echo "  ✓ $c -> $(command -v "$(cli_command "$c")")"; any=1; fi; done; [[ $any -eq 1 ]] || echo "  (nenhum dos conhecidos: ${KNOWN_CLIS[*]})"; }
+
+case "${1:-}" in
+  add)      shift; cmd_add "$@";;
+  up)       shift; cmd_up "$@";;
+  down)     shift; cmd_down "$@";;
+  ls)       cmd_ls;;
+  clis)     cmd_clis;;
+  profiles) cmd_profiles;;
+  profile)  shift; cmd_profile "$@";;
+  ""|-h|--help|help)
+    awk 'NR>1{ if(/^#/){sub(/^# ?/,"");print} else exit }' "$0";;
+  *) die "subcomando desconhecido: $1 (jarvis --help)";;
+esac
