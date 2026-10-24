@@ -15,6 +15,7 @@ ASSISTED
 SWARM
 - Orchestrator + specialized workers/critics;
 - useful for independent multi-domain work, T2+, or high-risk review.
+- **Proactive Auto-Swarm:** When a mission contains two or more independent work fronts (e.g., distinct UI pages, frontend vs backend, or implementation vs adversarial review), the Orchestrator MUST proactively distribute ready nodes to idle CLI panes without waiting for human intervention or requests.
 
 Never equate more agents with better engineering.
 

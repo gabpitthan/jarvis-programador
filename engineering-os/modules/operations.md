@@ -27,10 +27,12 @@ When integrating with external providers (SMTP mailers, payment gateways, S3/Min
 
 ## Deployment & rollback safety
 
-- **Pre-deploy backup:** Create and verify full logical database dumps and storage archives before mutating live runtime containers.
+- **Fast-path for low-risk UI/text changes (T0/T1):** Isolated cosmetic and text changes in frontend bundles must use atomic frontend-only deployment without database migration pipelines, container restarts, or heavyweight logical dumps.
+- **Pre-deploy backup for backend/database changes:** Create and verify full logical database dumps and storage archives before mutating live runtime containers or database schemas.
 - **Rolling deployment:** Zero-downtime rolling update of application replicas with sequential health-check gates before traffic shifting.
 - **Atomic frontend release:** Deploy web assets into a versioned release folder, switching the live symlink atomically with preserved rollback targets.
 - **Immutable artifact manifests:** Record checksums (`SHA256SUMS`) for deploy artifacts and preserve rollback configurations.
+- **Post-deploy hygiene (zero clutter):** Immediately following verified deployment, transient feature branches (remote and local) and temporary worktrees must be pruned and closed in the coordinator to prevent workspace and repository bloat.
 
 ## Post-change observation
 
