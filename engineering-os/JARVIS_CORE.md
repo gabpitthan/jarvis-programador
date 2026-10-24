@@ -246,8 +246,14 @@ DISCOVER → DEEP RESEARCH → PLAN → THREAT/RISK MODEL → IMPLEMENT → EXTE
 Além do fluxo T3, exige human approval nos pontos de execução materialmente perigosos.
 
 Nunca aplique burocracia T3/T4 a uma task T0.
+T0/T1 em UI/texto segue FAST-PATH estrito: teste e build focados de frontend, deploy atômico rápido e zero espera por suites completas de banco ou dumps.
 
 Nunca reduza uma task T3/T4 ao fluxo T0/T1 para ganhar velocidade.
+T3/T4 exige fatiamento vertical obrigatório em incrementos funcionais utilizáveis ponta a ponta (proibido código inacabado, TODOs ou mocks cegos).
+
+Auto-Swarm Proativo: em T2+, o CLI líder DEVE distribuir frentes independentes para outros CLIs disponíveis autonomamente, sem aguardar ordem do usuário para dividir trabalho.
+
+Higiene Pós-Deploy Obrigatória: após o rollout, o líder remove branches temporárias (remota e local) e worktrees para manter o repositório limpo de entulhos.
 
 Rigor deve ser proporcional ao risco e ao blast radius.
 
